@@ -1,0 +1,969 @@
+<div class="page-width page-width--narrow section-template--21444797006159__main-padding">
+  <h1 class="main-page-title page-title h0 scroll-trigger animate--fade-in">
+    IDealWALLET|Specification
+  </h1>
+  <div class="rte scroll-trigger animate--slide-in">
+    <div id="header">
+<h1>KASMIR DID Method Specification</h1>
+<div class="details">
+<span id="author" class="author">Tobias Ehrlich (KAPRION Technologies GmbH)</span><br> <span id="email" class="email"><a href="mailto:tobias.ehrlich@kaprion.de">tobias.ehrlich@kaprion.de</a></span><br> <span id="author2" class="author">Petr Apletauer (KAPRION Technologies GmbH)</span><br> <span id="email2" class="email"><a href="mailto:petr.apeltauer@kaprion.de">petr.apeltauer@kaprion.de</a></span><br> <span id="author3" class="author">Ben Biedermann (KAPRION Technologies GmbH)</span><br> <span id="email3" class="email"><a href="mailto:ben.biedermann@kaprion.de">ben.biedermann@kaprion.de</a></span><br> <span id="revnumber">version 1.0.0,</span> <span id="revdate">2023-09-21</span> <br><span id="revremark">Draft</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_abstract">Abstract</a></li>
+<li><a href="#_conformance">1. Conformance</a></li>
+<li><a href="#_terminology">2. Terminology</a></li>
+<li><a href="#_introduction">3. Introduction</a></li>
+<li>
+<a href="#_concept">4. Concept</a>
+<ul class="sectlevel2">
+<li><a href="#_keys">4.1. Keys</a></li>
+<li><a href="#_events">4.2. Events</a></li>
+<li><a href="#_key_event_log">4.3. Key Event Log</a></li>
+<li><a href="#_key_event_receipt_log">4.4. Key Event Receipt Log</a></li>
+<li><a href="#_key_state">4.5. Key State</a></li>
+<li><a href="#_resolver_metadata">4.6. Resolver Metadata</a></li>
+<li><a href="#_the_did_document">4.7. The DID Document</a></li>
+</ul>
+</li>
+<li>
+<a href="#_did_specification">5. DID Specification</a>
+<ul class="sectlevel2">
+<li><a href="#_method_name">5.1. Method Name</a></li>
+<li><a href="#_method_specific_identifier">5.2. Method Specific Identifier</a></li>
+</ul>
+</li>
+<li>
+<a href="#_protocols">6. Protocols</a>
+<ul class="sectlevel2">
+<li><a href="#_create">6.1. Create</a></li>
+<li><a href="#_read">6.2. Read</a></li>
+<li><a href="#_rotate">6.3. Rotate</a></li>
+<li><a href="#_delete">6.4. Delete</a></li>
+<li><a href="#_deactivate">6.5. Deactivate</a></li>
+<li><a href="#_resolving_offline">6.6. Resolving (offline)</a></li>
+</ul>
+</li>
+<li>
+<a href="#_security_considerations">7. Security Considerations</a>
+<ul class="sectlevel2">
+<li><a href="#_key_state_verification">7.1. Key State Verification</a></li>
+<li><a href="#_confidentiality_violations_password_sniffing">7.2. Confidentiality Violations, Password Sniffing</a></li>
+<li><a href="#_replay_attacks">7.3. Replay Attacks</a></li>
+<li><a href="#_message_insertion_deletion_modification">7.4. Message Insertion, Deletion, Modification</a></li>
+<li><a href="#_man_in_the_middle_attacks">7.5. Man-In-The-Middle Attacks</a></li>
+</ul>
+</li>
+<li><a href="#_references">References</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1 text-justify">
+<h2 id="_abstract">
+<a class="anchor" href="#_abstract"></a><a class="link" href="#_abstract">Abstract</a>
+</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most Decentralized Identifier (DIDs) target Distributed Ledgers Technologies (DLT) or require to be online to achieve a sufficient level of trust. This document serves the specification for the generation and interpretation of an offline capable DID method branded KASMIR DID.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conformance">
+<a class="anchor" href="#_conformance"></a><a class="link" href="#_conformance">1. Conformance</a>
+</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this document the key words <em>MAY</em>, <em>MUST</em>, <em>MUST NOT</em>, and <em>SHOULD</em> are used and to be interpreted as described in <a href="#RFC2119">[RFC2119]</a> and when they appear, they are capitalized.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_terminology">
+<a class="anchor" href="#_terminology"></a><a class="link" href="#_terminology">2. Terminology</a>
+</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ASM</dt>
+<dd>
+<p>Hardware Secure Module with installed Secure Applet</p>
+</dd>
+<dt class="hdlist1">DID</dt>
+<dd>
+<p>Decentralized Identifier <a href="#DID-CORE">[DID-CORE]</a></p>
+</dd>
+<dt class="hdlist1">DLT</dt>
+<dd>
+<p>Distributed Ledgers Technologies</p>
+</dd>
+<dt class="hdlist1">EC</dt>
+<dd>
+<p>Elliptic Curves</p>
+</dd>
+<dt class="hdlist1">Holder</dt>
+<dd>
+<p>the subject who holds one or more credentials and generating presentations from them</p>
+</dd>
+<dt class="hdlist1">HSM</dt>
+<dd>
+<p>Hardware Secure Module</p>
+</dd>
+<dt class="hdlist1">ID</dt>
+<dd>
+<p>identifier is a name that identifies/labels a unique class of objects</p>
+</dd>
+<dt class="hdlist1">Issuer</dt>
+<dd>
+<p>creating and issuing a credential</p>
+</dd>
+<dt class="hdlist1">IRI</dt>
+<dd>
+<p>Internationalized Resource Identifiers</p>
+</dd>
+<dt class="hdlist1">JSON</dt>
+<dd>
+<p>JavaScript Object Notation</p>
+</dd>
+<dt class="hdlist1">JWK</dt>
+<dd>
+<p>JSON Web Key as specified in <a href="#RFC7517">[RFC7517]</a></p>
+</dd>
+<dt class="hdlist1">KAPRION</dt>
+<dd>
+<p>Cooperative and Adaptive Process Interoperability Online Network (Kooperatives und Adaptives Prozess-Interoperabilitäts-Online-Netzwerk)</p>
+</dd>
+<dt class="hdlist1">KASMIR</dt>
+<dd>
+<p>KAPRION ASM Mír</p>
+</dd>
+<dt class="hdlist1">SSI</dt>
+<dd>
+<p>Self-Sovereign Identity, a paradigm of digital identity control that returns control of an entity’s own digital being to that entity itself.</p>
+</dd>
+<dt class="hdlist1">URI</dt>
+<dd>
+<p>Uniform Resource Identifier</p>
+</dd>
+<dt class="hdlist1">URN</dt>
+<dd>
+<p>Uniform Resource Name</p>
+</dd>
+<dt class="hdlist1">UUID</dt>
+<dd>
+<p>Universally Unique Identifier</p>
+</dd>
+<dt class="hdlist1">Verifier</dt>
+<dd>
+<p>is receiving one or more credentials, optionally inside a presentation, for processing</p>
+</dd>
+<dt class="hdlist1">W3C</dt>
+<dd>
+<p>World Wide Web Consortium</p>
+</dd>
+<dt class="hdlist1">Witness</dt>
+<dd>
+<p>is an entity which validates or anchors the key event log with key states.</p>
+</dd>
+</dl>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1 text-justify">
+<h2 id="_introduction">
+<a class="anchor" href="#_introduction"></a><a class="link" href="#_introduction">3. Introduction</a>
+</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In den meisten Fällen kann keine flächendeckende Garantie ausgesprochen werden, dass Geräte, die digitale Kommunikationsfähigkeiten besitzen, immer an einem aktiven Netzwerk hängen und somit nicht immer online auf Daten zugreifen können. Für die meisten web-basierende Angebote stellt das kein Problem dar, da sie ohnehin nur online verfügbar sind, dennoch sollten Daten ebenso leicht ohne Drittnetze (im folgendem als offline bezeichnet) austauschbar sein, ähnlich wie seit Jahrhunderten Zahlungsmittel ihren Besitzer wechseln. Eine offline fähige ID muss jedoch auch auch vertrauenswürdig sein, denn schließlich hat ein Gerät nicht immer die gleichen interfaces wie ein etwaiger menschlicher Konterfei, um zusätzliche attribute zu prüfen. Diese Anforderungen gelingen nur in zusammenspiel verschiedener Komponenten. Im folgendem wird die did:kasmir vorgestellt, verschiedene Technologien vereint, bzw. erweitert.</p>
+</div>
+<div class="paragraph">
+<p>Zur Offlinefähigkeit wird als Anforderung eine ledger agnostic voraus gesetzt, die u.a. von <a href="#DID-KEY">[DID-KEY]</a>, wo der identifier den public key darstellt, <a href="#DID-WEB">[DID-WEB]</a> <a href="#DID-PEER">[DID-PEER]</a> <a href="#DID-KERI">[DID-KERI]</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Anforderungen HSM, offline, ohne DLT, Interop</p>
+</li>
+<li>
+<p>basiert auf einer modifizierten KERI</p>
+</li>
+<li>
+<p>merge peer / web</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The DID method <em>MUST</em> be ledger agnostic</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>did:peer</strong> Method 2 allows us to resolve the DID offline ⇒ we should have something similar for <strong>did:keri</strong> if possible</p>
+</li>
+<li>
+<p>if DID cannot be resolved, DID resolver should look into the DIDComm message attachments to take DID Document from there</p>
+</li>
+<li>
+<p>if the DID Document cannot be resolved and is not in attachments → send <strong><em>adopted</em> problem-report message</strong></p>
+</li>
+<li>
+<p>Resolution by KERI docs:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a href="https://identity.foundation/keri/did_methods/#read" class="bare">https://identity.foundation/keri/did_methods/#read</a>](<a href="https://identity.foundation/keri/did_methods/#read" class="bare">https://identity.foundation/keri/did_methods/#read</a>)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The KASMIR DID specification conforms the requirements of the Decentralized Identifiers v1.0 Specification <a href="#DID-CORE">[DID-CORE]</a> and will be prefixed with <code>did:kasmir</code>.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1 text-justify">
+<h2 id="_concept">
+<a class="anchor" href="#_concept"></a><a class="link" href="#_concept">4. Concept</a>
+</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_keys">
+<a class="anchor" href="#_keys"></a><a class="link" href="#_keys">4.1. Keys</a>
+</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>seems we need only <strong>Assertion</strong> and <strong>Key Agreement</strong> key pairs (see <a href="https://www.w3.org/TR/did-core/#verification-relationships" class="bare">https://www.w3.org/TR/did-core/#verification-relationships</a>)</p>
+</li>
+<li>
+<p>well perhaps also <strong>Authentication</strong> key pair to authenticate 2 HW chips…​</p>
+</li>
+<li>
+<p><strong>symmetric session key</strong> will be created from the <strong>Key Agreement</strong> key pair</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_events">
+<a class="anchor" href="#_events"></a><a class="link" href="#_events">4.2. Events</a>
+</h3>
+</div>
+<div class="sect2">
+<h3 id="_key_event_log">
+<a class="anchor" href="#_key_event_log"></a><a class="link" href="#_key_event_log">4.3. Key Event Log</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_key_event_receipt_log">
+<a class="anchor" href="#_key_event_receipt_log"></a><a class="link" href="#_key_event_receipt_log">4.4. Key Event Receipt Log</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_key_state">
+<a class="anchor" href="#_key_state"></a><a class="link" href="#_key_state">4.5. Key State</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p>The [did:peer section for Method 2](<a href="https://identity.foundation/peer-did-method-spec/#generation-method" class="bare">https://identity.foundation/peer-did-method-spec/#generation-method</a>) describes how all keys can be compressed as one long identifier. In KERI it is not forbidden to generate something similar but other information also need to be added. Also there is a big disadvantage because it is not realy efficient to handle such long identifier in the Applet. Therefore I (@Tobias) recommend to generate a URL like string as it is described in the [W3C Decentralized Identifiers (DIDs) v1.0](<a href="https://www.w3.org/TR/did-core/#did-url-syntax" class="bare">https://www.w3.org/TR/did-core/#did-url-syntax</a>) specification. As described above the <em>key state</em> object is part of the DID document so it might be useful to attach it as part of a base64url encrypted DID fragment.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>did:keri:prefix#base64KeyStateObject</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively a query could be constructed:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>did:keri:prefix?keyState=base64KeyStateObject</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we assume the ICP event above is the last key state event, then we can create</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>did:keri:EZAoTNZH3ULvaU6Z-i0d8JJR2nmwyYAfSVPzhzS6b5CM#ImtleVN0YXRlIjp7InYiOiJLRVJJMTBKU09OMDAwMTFjXyIsImkiOiJFWkFvVE5aSDNVTHZhVTZaLWkwZDhKSlIybm13eVlBZlNWUHpoelM2YjVDTSIsInMiOiIwIiwidCI6ImljcCIsImt0IjoiMSIsImsiOlsiRGFVNkpSMm5td3laLWkwZDhKWkFvVE5aSDNVTHZZQWZTVlB6aHpTNmI1Q00iXSwibiI6IkVaLWkwZDhKWkFvVE5aSDNVTHZhVTZKUjJubXd5WUFmU1ZQemh6UzZiNUNNIiwid3QiOiIxIiwidyI6WyJEVE5aSDNVTHZhVTZKUjJubXd5WUFmU1ZQemh6UzZiWi1pMGQ4SlpBbzVDTSJdLCJjIjpbIkVPIl19</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>did:keri:EZAoTNZH3ULvaU6Z-i0d8JJR2nmwyYAfSVPzhzS6b5CM?keyState=eyJ2IjoiS0VSSTEwSlNPTjAwMDExY18iLCJpIjoiRVpBb1ROWkgzVUx2YVU2Wi1pMGQ4SkpSMm5td3lZQWZTVlB6aHpTNmI1Q00iLCJzIjoiMCIsInQiOiJpY3AiLCJrdCI6IjEiLCJrIjpbIkRhVTZKUjJubXd5Wi1pMGQ4SlpBb1ROWkgzVUx2WUFmU1ZQemh6UzZiNUNNIl0sIm4iOiJFWi1pMGQ4SlpBb1ROWkgzVUx2YVU2SlIybm13eVlBZlNWUHpoelM2YjVDTSIsInd0IjoiMSIsInciOlsiRFROWkgzVUx2YVU2SlIybm13eVlBZlNWUHpoelM2YlotaTBkOEpaQW81Q00iXSwiYyI6WyJFTyJdfQ</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: The JSON was minified before base64url encoding</p>
+</div>
+<div class="listingblock">
+<div class="title">A simple key state event from <a href="#KERI">[KERI]</a> whitepaper</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "v" : "KERI10JSON00011c_",
+    "i" : "EZAoTNZH3ULvaU6Z-i0d8JJR2nmwyYAfSVPzhzS6b5CM", //DID of owner = controller
+    "s" : "0",
+    "t" :  "icp",
+    "kt":  "1",
+    "k" :  [
+             "CF5pxRJP6THrUtlDdhh07hJEDKrJxkcR9m5u1xs33bhp",    //C ~ X25519KeyAgreementKey2019
+             "DaU6JR2nmwyZ-i0d8JZAoTNZH3ULvYAfSVPzhzS6b5CM",    //D ~ Ed25519VerificationKey2018 or Ed25519VerificationKey2020 (just choose one)
+             "1AABAsL0-AEWBfl876zt4XcTWpGcA4V248OF-n-8gou45OZA" //1AAB ~ EcdsaSecp256k1VerificationKey2019
+           ],
+    "n" :  "EZ-i0d8JZAoTNZH3ULvaU6JR2nmwyYAfSVPzhzS6b5CM",
+    "wt":  "1",
+    "w" : ["DTNZH3ULvaU6JR2nmwyYAfSVPzhzS6bZ-i0d8JZAo5CM"],
+    "c" :  ["EO"]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_resolver_metadata">
+<a class="anchor" href="#_resolver_metadata"></a><a class="link" href="#_resolver_metadata">4.6. Resolver Metadata</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p>Like did:peer KERI keys also can have a <em>purposecode</em> and <em>transform</em> information but it is not encoded in constant two bytes, depending on purpose and/or key type the code length can go up to 12 bytes. At the moment only a length up to 4 bytes is documented.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_did_document">
+<a class="anchor" href="#_the_did_document"></a><a class="link" href="#_the_did_document">4.7. The DID Document</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>DID Doc used in DIDComm</p>
+</li>
+<li>
+<p>Key State compact but needs to be resolved to DID Doc</p>
+</li>
+<li>
+<p>Key Log a set of Key states</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>see issue 20 IDeal wallet</p>
+</div>
+<div class="listingblock">
+<div class="title">A simple DID document taken from example 1 of <a href="#DID-CORE">[DID-CORE]</a>
+</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/ed25519-2020/v1"
+  ]
+  "id": "did:example:123456789abcdefghi",
+  "authentication": [{
+    "id": "did:example:123456789abcdefghi#keys-1",
+    "type": "Ed25519VerificationKey2020",
+    "controller": "did:example:123456789abcdefghi",
+    "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+  }]
+}</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1 text-justify">
+<h2 id="_did_specification">
+<a class="anchor" href="#_did_specification"></a><a class="link" href="#_did_specification">5. DID Specification</a>
+</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_method_name">
+<a class="anchor" href="#_method_name"></a><a class="link" href="#_method_name">5.1. Method Name</a>
+</h3>
+<div class="paragraph">
+<p>The method name that identifies this DID method <em>MUST</em> be: <code>kasmir</code>.</p>
+</div>
+<div class="paragraph">
+<p>When <code>did:kasmir</code> is used a ASM which fulfills KAPRIONs KASMIR Applet specification <em>MUST</em> be used, an additional registry, such as DLT, <em>MAY</em> be optionally. If connected to an additional register the KASMIR method name <em>MUST</em> be pressent to identify the additional capabilities of the KASMIR applet.</p>
+</div>
+<div class="ulist">
+<div class="title">Possible DID strings:</div>
+<ul>
+<li>
+<p><code>did:kasmir:method-specific-id</code></p>
+</li>
+<li>
+<p><code>did:peer:3method-specific-id</code>; Note the numalgo <em>3</em> is not yet defined Peer DID Method.</p>
+</li>
+<li>
+<p><code>did:indy:kasmir:method-specific-id</code></p>
+</li>
+<li>
+<p><code>did:indy:sov:kasmir:method-specific-id</code></p>
+</li>
+<li>
+<p><code>did:…:kasmir:method-specific-id</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_method_specific_identifier">
+<a class="anchor" href="#_method_specific_identifier"></a><a class="link" href="#_method_specific_identifier">5.2. Method Specific Identifier</a>
+</h3>
+<div class="paragraph">
+<p>Like in KERI the method specific identifier for the <code>kasmir</code> method is a self-addressing identifier which is fully generated and maintained within the ASM and protected by hardware.</p>
+</div>
+<div class="paragraph">
+<p>The KASMIR self-addressing identifier is cryptographically bound to the inception keys used to create it.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1 text-justify">
+<h2 id="_protocols">
+<a class="anchor" href="#_protocols"></a><a class="link" href="#_protocols">6. Protocols</a>
+</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create">
+<a class="anchor" href="#_create"></a><a class="link" href="#_create">6.1. Create</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">wip.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Required Applet calls</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>init Key Object</p>
+</li>
+<li>
+<p>add n key(s)</p>
+</li>
+<li>
+<p>add m witness(es)/anchors</p>
+</li>
+<li>
+<p>gen method-specific-id</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Generate Key State</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>add public keys</p>
+</li>
+<li>
+<p>add info about next keys</p>
+</li>
+<li>
+<p>add witness(es) and anchors (otional)</p>
+</li>
+<li>
+<p>sign the ICP</p>
+</li>
+<li>
+<p>store the ICP in a key event log (KEL)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>generate DID document (App)</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>convert key event message to JSON</p>
+</li>
+<li>
+<p>extract prefix and gen did-string</p>
+</li>
+<li>
+<p>extract keys and add them to verificationMethod object</p>
+</li>
+<li>
+<p>add additional info</p>
+</li>
+<li>
+<p>add JSON key event message to DID document</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_prefix_generation">
+<a class="anchor" href="#_prefix_generation"></a><a class="link" href="#_prefix_generation">6.1.1. Prefix generation</a>
+</h4>
+<div class="ulist">
+<div class="title">Symbols</div>
+<ul>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>N</mi></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-1" style="width: 1.063em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.951em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1000.951em, 2.681em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mi" id="MathJax-Span-3" style="font-family: STIXGeneral-Italic;">𝑁<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.059em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 0.878em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math></span></span><script type="math/tex" id="MathJax-Element-1">N</script> … prefix derivation code letter</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>H</mi></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-4" style="width: 1.063em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.951em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1000.951em, 2.681em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-5"><span class="mi" id="MathJax-Span-6" style="font-family: STIXGeneral-Italic;">𝐻<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.059em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 0.878em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>H</mi></math></span></span><script type="math/tex" id="MathJax-Element-2">H</script> … SHA-256</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>D</mi></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-7" style="width: 0.951em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.84em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1000.84em, 2.681em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-8"><span class="mi" id="MathJax-Span-9" style="font-family: STIXGeneral-Italic;">𝐷</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.059em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 0.878em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi></math></span></span><script type="math/tex" id="MathJax-Element-3">D</script> … Base64URL derivation</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>Q</mi></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-10" style="width: 0.896em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.784em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1000.728em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-11"><span class="mi" id="MathJax-Span-12" style="font-family: STIXGeneral-Italic;">𝑄</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.066em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math></span></span><script type="math/tex" id="MathJax-Element-4">Q</script> … current Public Key</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-5-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><msup><mi>Q</mi><mo>&amp;#x2032;</mo></msup></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-13" style="width: 1.342em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.175em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.342em, 1001.175em, 2.626em, -999.997em); top: -2.285em; left: 0em;"><span class="mrow" id="MathJax-Span-14"><span class="msup" id="MathJax-Span-15"><span style="display: inline-block; position: relative; width: 1.119em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-16" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -4.406em; left: 0.784em;"><span class="mo" id="MathJax-Span-17" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.291em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.128em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>Q</mi><mo>′</mo></msup></math></span></span><script type="math/tex" id="MathJax-Element-5">Q'</script> … next Public Key</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-6-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mover><mi>Q</mi><mo stretchy=&quot;false&quot;>&amp;#x005E;</mo></mover></mrow></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-18" style="width: 0.951em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.84em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.175em, 1000.784em, 2.626em, -999.997em); top: -2.285em; left: 0em;"><span class="mrow" id="MathJax-Span-19"><span class="texatom" id="MathJax-Span-20"><span class="mrow" id="MathJax-Span-21"><span class="munderover" id="MathJax-Span-22"><span style="display: inline-block; position: relative; width: 0.784em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-23" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -4.294em; left: 0.338em;"><span style="height: 0em; vertical-align: 0em; width: 0.393em; display: inline-block; overflow: hidden;"></span><span class="mo" id="MathJax-Span-24" style="font-family: STIXGeneral-Regular;"><span style="margin-left: -0.388em;">̂</span><span style="height: 0em; vertical-align: 0em; width: 0em; display: inline-block; overflow: hidden;"></span></span><span style="display: inline-block; overflow: hidden; height: 1px; width: 0em;"></span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.291em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.378em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mover><mi>Q</mi><mo stretchy="false">^</mo></mover></mrow></math></span></span><script type="math/tex" id="MathJax-Element-6">\hat{Q}</script> … witness Public Key</p>
+</li>
+<li>
+<p><span class="MathJax_Preview" style="color: inherit;"></span><span class="MathJax" id="MathJax-Element-7-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>p</mi><mi>a</mi><mi>b</mi></math>" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-25" style="width: 1.733em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.509em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1001.509em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-26"><span class="mi" id="MathJax-Span-27" style="font-family: STIXGeneral-Italic;">𝑝</span><span class="mi" id="MathJax-Span-28" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mi" id="MathJax-Span-29" style="font-family: STIXGeneral-Italic;">𝑏</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.066em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>p</mi><mi>a</mi><mi>b</mi></math></span></span><script type="math/tex" id="MathJax-Element-7">pab</script> … prefix agreement byte</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Generation process</div>
+<ol class="arabic">
+<li>
+<p>generate the full KERI object (add keys &amp; witness &amp; prefix agreement byte aka configuration mode)</p>
+</li>
+<li>
+<p>generate a SHA-256 hash over all pre-rotaded public keys</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-8-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mo>=</mo><mi>H</mi><mo stretchy=&quot;false&quot;>(</mo><msubsup><mi>Q</mi><mn>0</mn><mo>&amp;#x2032;</mo></msubsup><mo>,</mo><mo>&amp;#x22EF;</mo><mo>,</mo><msubsup><mi>Q</mi><mi>n</mi><mo>&amp;#x2032;</mo></msubsup><mo stretchy=&quot;false&quot;>)</mo><mo>,</mo><mi>n</mi><mo>&amp;#x2208;</mo><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mi mathvariant=&quot;double-struck&quot;>N</mi></mrow></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-30" style="width: 13.619em; display: inline-block;"><span style="display: inline-block; position: relative; width: 12.168em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.621em, 1012.112em, 3.016em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-31"><span class="mi" id="MathJax-Span-32" style="font-family: STIXGeneral-Italic;">𝑛</span><span class="mi" id="MathJax-Span-33" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-34" style="font-family: STIXGeneral-Italic;">𝑥</span><span class="mi" id="MathJax-Span-35" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mo" id="MathJax-Span-36" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mi" id="MathJax-Span-37" style="font-family: STIXGeneral-Italic; padding-left: 0.338em;">𝐻<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span><span class="mo" id="MathJax-Span-38" style="font-family: STIXGeneral-Regular;">(</span><span class="msubsup" id="MathJax-Span-39"><span style="display: inline-block; position: relative; width: 1.23em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-40" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; clip: rect(3.463em, 1000.338em, 4.188em, -999.997em); top: -4.35em; left: 0.784em;"><span class="mo" id="MathJax-Span-41" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; clip: rect(3.351em, 1000.449em, 4.188em, -999.997em); top: -3.68em; left: 0.784em;"><span class="mn" id="MathJax-Span-42" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">0</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-43" style="font-family: STIXGeneral-Regular;">,</span><span class="mo" id="MathJax-Span-44" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">⋯</span><span class="mo" id="MathJax-Span-45" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">,</span><span class="msubsup" id="MathJax-Span-46" style="padding-left: 0.17em;"><span style="display: inline-block; position: relative; width: 1.23em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-47" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; clip: rect(3.463em, 1000.338em, 4.188em, -999.997em); top: -4.35em; left: 0.784em;"><span class="mo" id="MathJax-Span-48" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; clip: rect(3.518em, 1000.449em, 4.188em, -999.997em); top: -3.848em; left: 0.784em;"><span class="mi" id="MathJax-Span-49" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">𝑛</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-50" style="font-family: STIXGeneral-Regular;">)</span><span class="mo" id="MathJax-Span-51" style="font-family: STIXGeneral-Regular;">,</span><span class="mi" id="MathJax-Span-52" style="font-family: STIXGeneral-Italic; padding-left: 0.17em;">𝑛</span><span class="mo" id="MathJax-Span-53" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">∈</span><span class="texatom" id="MathJax-Span-54" style="padding-left: 0.338em;"><span class="mrow" id="MathJax-Span-55"><span class="mi" id="MathJax-Span-56" style="font-family: STIXGeneral-Regular;">ℕ</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.434em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.316em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><msubsup><mi>Q</mi><mn>0</mn><mo>′</mo></msubsup><mo>,</mo><mo>⋯</mo><mo>,</mo><msubsup><mi>Q</mi><mi>n</mi><mo>′</mo></msubsup><mo stretchy="false">)</mo><mo>,</mo><mi>n</mi><mo>∈</mo><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-8">next = H(Q'_0, \cdots, Q'_n), n \in \mathbb{N}</script></div>
+</div>
+</li>
+<li>
+<p>generate a SHA-256 hash over all current public keys</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-9-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo>=</mo><mi>H</mi><mo stretchy=&quot;false&quot;>(</mo><msub><mi>Q</mi><mn>0</mn></msub><mo>,</mo><mo>&amp;#x22EF;</mo><mo>,</mo><msub><mi>Q</mi><mi>n</mi></msub><mo stretchy=&quot;false&quot;>)</mo><mo>,</mo><mi>n</mi><mo>&amp;#x2208;</mo><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mi mathvariant=&quot;double-struck&quot;>N</mi></mrow></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-57" style="width: 14.958em; display: inline-block;"><span style="display: inline-block; position: relative; width: 13.34em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1013.284em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-58"><span class="mi" id="MathJax-Span-59" style="font-family: STIXGeneral-Italic;">𝑐</span><span class="mi" id="MathJax-Span-60" style="font-family: STIXGeneral-Italic;">𝑢</span><span class="mi" id="MathJax-Span-61" style="font-family: STIXGeneral-Italic;">𝑟</span><span class="mi" id="MathJax-Span-62" style="font-family: STIXGeneral-Italic;">𝑟</span><span class="mi" id="MathJax-Span-63" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-64" style="font-family: STIXGeneral-Italic;">𝑛</span><span class="mi" id="MathJax-Span-65" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mo" id="MathJax-Span-66" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mi" id="MathJax-Span-67" style="font-family: STIXGeneral-Italic; padding-left: 0.338em;">𝐻<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span><span class="mo" id="MathJax-Span-68" style="font-family: STIXGeneral-Regular;">(</span><span class="msubsup" id="MathJax-Span-69"><span style="display: inline-block; position: relative; width: 1.23em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-70" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -3.848em; left: 0.784em;"><span class="mn" id="MathJax-Span-71" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">0</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-72" style="font-family: STIXGeneral-Regular;">,</span><span class="mo" id="MathJax-Span-73" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">⋯</span><span class="mo" id="MathJax-Span-74" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">,</span><span class="msubsup" id="MathJax-Span-75" style="padding-left: 0.17em;"><span style="display: inline-block; position: relative; width: 1.23em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-76" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -3.848em; left: 0.784em;"><span class="mi" id="MathJax-Span-77" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">𝑛</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-78" style="font-family: STIXGeneral-Regular;">)</span><span class="mo" id="MathJax-Span-79" style="font-family: STIXGeneral-Regular;">,</span><span class="mi" id="MathJax-Span-80" style="font-family: STIXGeneral-Italic; padding-left: 0.17em;">𝑛</span><span class="mo" id="MathJax-Span-81" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">∈</span><span class="texatom" id="MathJax-Span-82" style="padding-left: 0.338em;"><span class="mrow" id="MathJax-Span-83"><span class="mi" id="MathJax-Span-84" style="font-family: STIXGeneral-Regular;">ℕ</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.066em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><msub><mi>Q</mi><mn>0</mn></msub><mo>,</mo><mo>⋯</mo><mo>,</mo><msub><mi>Q</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>,</mo><mi>n</mi><mo>∈</mo><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-9">current = H(Q_0, \cdots, Q_n), n \in \mathbb{N}</script></div>
+</div>
+</li>
+<li>
+<p>generate a SHA-256 hash over all witnesses</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-10-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>w</mi><mi>i</mi><mi>t</mi><mi>n</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>s</mi><mo>=</mo><mi>H</mi><mo stretchy=&quot;false&quot;>(</mo><msub><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mover><mi>Q</mi><mo stretchy=&quot;false&quot;>&amp;#x005E;</mo></mover></mrow><mn>0</mn></msub><mo>,</mo><mo>&amp;#x22EF;</mo><mo>,</mo><msub><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mover><mi>Q</mi><mo stretchy=&quot;false&quot;>&amp;#x005E;</mo></mover></mrow><mi>m</mi></msub><mo stretchy=&quot;false&quot;>)</mo><mo>,</mo><mi>m</mi><mo>&amp;#x2208;</mo><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mi mathvariant=&quot;double-struck&quot;>N</mi></mrow></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-85" style="width: 16.576em; display: inline-block;"><span style="display: inline-block; position: relative; width: 14.791em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.398em, 1014.735em, 2.905em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-86"><span class="mi" id="MathJax-Span-87" style="font-family: STIXGeneral-Italic;">𝑤</span><span class="mi" id="MathJax-Span-88" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-89" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mi" id="MathJax-Span-90" style="font-family: STIXGeneral-Italic;">𝑛</span><span class="mi" id="MathJax-Span-91" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-92" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-93" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-94" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-95" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mo" id="MathJax-Span-96" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mi" id="MathJax-Span-97" style="font-family: STIXGeneral-Italic; padding-left: 0.338em;">𝐻<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span><span class="mo" id="MathJax-Span-98" style="font-family: STIXGeneral-Regular;">(</span><span class="msubsup" id="MathJax-Span-99"><span style="display: inline-block; position: relative; width: 1.23em; height: 0px;"><span style="position: absolute; clip: rect(2.905em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="texatom" id="MathJax-Span-100"><span class="mrow" id="MathJax-Span-101"><span class="munderover" id="MathJax-Span-102"><span style="display: inline-block; position: relative; width: 0.784em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-103" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -4.294em; left: 0.338em;"><span style="height: 0em; vertical-align: 0em; width: 0.393em; display: inline-block; overflow: hidden;"></span><span class="mo" id="MathJax-Span-104" style="font-family: STIXGeneral-Regular;"><span style="margin-left: -0.388em;">̂</span><span style="height: 0em; vertical-align: 0em; width: 0em; display: inline-block; overflow: hidden;"></span></span><span style="display: inline-block; overflow: hidden; height: 1px; width: 0em;"></span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -3.848em; left: 0.784em;"><span class="mn" id="MathJax-Span-105" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">0</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-106" style="font-family: STIXGeneral-Regular;">,</span><span class="mo" id="MathJax-Span-107" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">⋯</span><span class="mo" id="MathJax-Span-108" style="font-family: STIXGeneral-Regular; padding-left: 0.17em;">,</span><span class="msubsup" id="MathJax-Span-109" style="padding-left: 0.17em;"><span style="display: inline-block; position: relative; width: 1.342em; height: 0px;"><span style="position: absolute; clip: rect(2.905em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="texatom" id="MathJax-Span-110"><span class="mrow" id="MathJax-Span-111"><span class="munderover" id="MathJax-Span-112"><span style="display: inline-block; position: relative; width: 0.784em; height: 0px;"><span style="position: absolute; clip: rect(3.184em, 1000.728em, 4.355em, -999.997em); top: -4.015em; left: 0em;"><span class="mi" id="MathJax-Span-113" style="font-family: STIXGeneral-Italic;">𝑄</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -4.294em; left: 0.338em;"><span style="height: 0em; vertical-align: 0em; width: 0.393em; display: inline-block; overflow: hidden;"></span><span class="mo" id="MathJax-Span-114" style="font-family: STIXGeneral-Regular;"><span style="margin-left: -0.388em;">̂</span><span style="height: 0em; vertical-align: 0em; width: 0em; display: inline-block; overflow: hidden;"></span></span><span style="display: inline-block; overflow: hidden; height: 1px; width: 0em;"></span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span><span style="position: absolute; top: -3.848em; left: 0.784em;"><span class="mi" id="MathJax-Span-115" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">𝑚</span><span style="display: inline-block; width: 0px; height: 4.021em;"></span></span></span></span><span class="mo" id="MathJax-Span-116" style="font-family: STIXGeneral-Regular;">)</span><span class="mo" id="MathJax-Span-117" style="font-family: STIXGeneral-Regular;">,</span><span class="mi" id="MathJax-Span-118" style="font-family: STIXGeneral-Italic; padding-left: 0.17em;">𝑚</span><span class="mo" id="MathJax-Span-119" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">∈</span><span class="texatom" id="MathJax-Span-120" style="padding-left: 0.338em;"><span class="mrow" id="MathJax-Span-121"><span class="mi" id="MathJax-Span-122" style="font-family: STIXGeneral-Regular;">ℕ</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.309em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.441em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>w</mi><mi>i</mi><mi>t</mi><mi>n</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>s</mi><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>Q</mi><mo stretchy="false">^</mo></mover></mrow><mn>0</mn></msub><mo>,</mo><mo>⋯</mo><mo>,</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>Q</mi><mo stretchy="false">^</mo></mover></mrow><mi>m</mi></msub><mo stretchy="false">)</mo><mo>,</mo><mi>m</mi><mo>∈</mo><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-10">witnesses = H(\hat{Q}_0, \cdots, \hat{Q}_m), m \in \mathbb{N}</script></div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-note" title="Note"></i></td>
+<td class="content">This step can provide a hen-egg-problem if the witnesses isn’t already established and the event is not a delegated inception event (DIP), therefore this is at the moment a not available for public.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li>
+<p>concatenate prefix agreement byte, current, next and witnesses and generate a SHA-256 hash</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-11-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><mo>=</mo><mi>H</mi><mo stretchy=&quot;false&quot;>(</mo><mi>p</mi><mi>a</mi><mi>b</mi><mrow class=&quot;MJX-TeXAtom-BIN&quot;><mo fence=&quot;false&quot; stretchy=&quot;false&quot;>&amp;#x2016;</mo></mrow><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi><mrow class=&quot;MJX-TeXAtom-BIN&quot;><mo fence=&quot;false&quot; stretchy=&quot;false&quot;>&amp;#x2016;</mo></mrow><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mtext>&amp;#xA0;</mtext><mo stretchy=&quot;false&quot;>[</mo><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo fence=&quot;false&quot; stretchy=&quot;false&quot;>&amp;#x2016;</mo></mrow><mi>w</mi><mi>i</mi><mi>t</mi><mi>n</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>s</mi><mo stretchy=&quot;false&quot;>]</mo><mo stretchy=&quot;false&quot;>)</mo></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-123" style="width: 20.762em; display: inline-block;"><span style="display: inline-block; position: relative; width: 18.53em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1018.474em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-124"><span class="mi" id="MathJax-Span-125" style="font-family: STIXGeneral-Italic;">𝑑</span><span class="mi" id="MathJax-Span-126" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mi" id="MathJax-Span-127" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mi" id="MathJax-Span-128" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mo" id="MathJax-Span-129" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mi" id="MathJax-Span-130" style="font-family: STIXGeneral-Italic; padding-left: 0.338em;">𝐻<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span><span class="mo" id="MathJax-Span-131" style="font-family: STIXGeneral-Regular;">(</span><span class="mi" id="MathJax-Span-132" style="font-family: STIXGeneral-Italic;">𝑝</span><span class="mi" id="MathJax-Span-133" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mi" id="MathJax-Span-134" style="font-family: STIXGeneral-Italic;">𝑏</span><span class="texatom" id="MathJax-Span-135" style="padding-left: 0.226em;"><span class="mrow" id="MathJax-Span-136"><span class="mo" id="MathJax-Span-137" style="font-family: STIXGeneral-Regular;">‖</span></span></span><span class="mi" id="MathJax-Span-138" style="font-family: STIXGeneral-Italic; padding-left: 0.226em;">𝑐</span><span class="mi" id="MathJax-Span-139" style="font-family: STIXGeneral-Italic;">𝑢</span><span class="mi" id="MathJax-Span-140" style="font-family: STIXGeneral-Italic;">𝑟</span><span class="mi" id="MathJax-Span-141" style="font-family: STIXGeneral-Italic;">𝑟</span><span class="mi" id="MathJax-Span-142" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-143" style="font-family: STIXGeneral-Italic;">𝑛</span><span class="mi" id="MathJax-Span-144" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="texatom" id="MathJax-Span-145" style="padding-left: 0.226em;"><span class="mrow" id="MathJax-Span-146"><span class="mo" id="MathJax-Span-147" style="font-family: STIXGeneral-Regular;">‖</span></span></span><span class="mi" id="MathJax-Span-148" style="font-family: STIXGeneral-Italic; padding-left: 0.226em;">𝑛</span><span class="mi" id="MathJax-Span-149" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-150" style="font-family: STIXGeneral-Italic;">𝑥</span><span class="mi" id="MathJax-Span-151" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mtext" id="MathJax-Span-152" style="font-family: STIXGeneral-Regular;">&nbsp;</span><span class="mo" id="MathJax-Span-153" style="font-family: STIXGeneral-Regular;">[</span><span class="texatom" id="MathJax-Span-154"><span class="mrow" id="MathJax-Span-155"><span class="mo" id="MathJax-Span-156" style="font-family: STIXGeneral-Regular;">‖</span></span></span><span class="mi" id="MathJax-Span-157" style="font-family: STIXGeneral-Italic;">𝑤</span><span class="mi" id="MathJax-Span-158" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-159" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mi" id="MathJax-Span-160" style="font-family: STIXGeneral-Italic;">𝑛</span><span class="mi" id="MathJax-Span-161" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-162" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-163" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-164" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-165" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mo" id="MathJax-Span-166" style="font-family: STIXGeneral-Regular;">]</span><span class="mo" id="MathJax-Span-167" style="font-family: STIXGeneral-Regular;">)</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.128em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>p</mi><mi>a</mi><mi>b</mi><mrow class="MJX-TeXAtom-BIN"><mo fence="false" stretchy="false">‖</mo></mrow><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi><mrow class="MJX-TeXAtom-BIN"><mo fence="false" stretchy="false">‖</mo></mrow><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mtext>&nbsp;</mtext><mo stretchy="false">[</mo><mrow class="MJX-TeXAtom-ORD"><mo fence="false" stretchy="false">‖</mo></mrow><mi>w</mi><mi>i</mi><mi>t</mi><mi>n</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>s</mi><mo stretchy="false">]</mo><mo stretchy="false">)</mo></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-11">data = H(pab \mathbin\Vert current \mathbin\Vert next~[\mathbin\Vert witnesses])</script></div>
+</div>
+</li>
+<li>
+<p>generate a Base64URL string of the resulting hash</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-12-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>d</mi><mi>i</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi>t</mi><mo>=</mo><mi>D</mi><mo stretchy=&quot;false&quot;>(</mo><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><mo stretchy=&quot;false&quot;>)</mo></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-168" style="width: 8.094em; display: inline-block;"><span style="display: inline-block; position: relative; width: 7.201em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1007.146em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-169"><span class="mi" id="MathJax-Span-170" style="font-family: STIXGeneral-Italic;">𝑑</span><span class="mi" id="MathJax-Span-171" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-172" style="font-family: STIXGeneral-Italic;">𝑔</span><span class="mi" id="MathJax-Span-173" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-174" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-175" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mo" id="MathJax-Span-176" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mi" id="MathJax-Span-177" style="font-family: STIXGeneral-Italic; padding-left: 0.338em;">𝐷</span><span class="mo" id="MathJax-Span-178" style="font-family: STIXGeneral-Regular;">(</span><span class="mi" id="MathJax-Span-179" style="font-family: STIXGeneral-Italic;">𝑑</span><span class="mi" id="MathJax-Span-180" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mi" id="MathJax-Span-181" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mi" id="MathJax-Span-182" style="font-family: STIXGeneral-Italic;">𝑎</span><span class="mo" id="MathJax-Span-183" style="font-family: STIXGeneral-Regular;">)</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.066em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>d</mi><mi>i</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi>t</mi><mo>=</mo><mi>D</mi><mo stretchy="false">(</mo><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><mo stretchy="false">)</mo></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-12">digest = D(data)</script></div>
+</div>
+</li>
+<li>
+<p>add derivation code for KAPRION Version</p>
+<div class="stemblock">
+<div class="content"><span class="MathJax_Preview" style="color: inherit;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-13-Frame" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mi>m</mi><mi>e</mi><mi>t</mi><mi>h</mi><mi>o</mi><mi>d</mi><mo>&amp;#x2212;</mo><mi>s</mi><mi>p</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>f</mi><mi>i</mi><mi>c</mi><mo>&amp;#x2212;</mo><mi>i</mi><mi>d</mi><mo>=</mo><mtext>'N'</mtext><mrow class=&quot;MJX-TeXAtom-BIN&quot;><mo fence=&quot;false&quot; stretchy=&quot;false&quot;>&amp;#x2016;</mo></mrow><mi>d</mi><mi>i</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi>t</mi></math>" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-184" style="width: 17.414em; display: inline-block;"><span style="display: inline-block; position: relative; width: 15.516em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.677em, 1015.46em, 2.849em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-185"><span class="mi" id="MathJax-Span-186" style="font-family: STIXGeneral-Italic;">𝑚</span><span class="mi" id="MathJax-Span-187" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-188" style="font-family: STIXGeneral-Italic;">𝑡</span><span class="mi" id="MathJax-Span-189" style="font-family: STIXGeneral-Italic;">ℎ</span><span class="mi" id="MathJax-Span-190" style="font-family: STIXGeneral-Italic;">𝑜</span><span class="mi" id="MathJax-Span-191" style="font-family: STIXGeneral-Italic;">𝑑</span><span class="mo" id="MathJax-Span-192" style="font-family: STIXGeneral-Regular; padding-left: 0.226em;">−</span><span class="mi" id="MathJax-Span-193" style="font-family: STIXGeneral-Italic; padding-left: 0.226em;">𝑠</span><span class="mi" id="MathJax-Span-194" style="font-family: STIXGeneral-Italic;">𝑝</span><span class="mi" id="MathJax-Span-195" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-196" style="font-family: STIXGeneral-Italic;">𝑐</span><span class="mi" id="MathJax-Span-197" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-198" style="font-family: STIXGeneral-Italic;">𝑓<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.059em;"></span></span><span class="mi" id="MathJax-Span-199" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-200" style="font-family: STIXGeneral-Italic;">𝑐</span><span class="mo" id="MathJax-Span-201" style="font-family: STIXGeneral-Regular; padding-left: 0.226em;">−</span><span class="mi" id="MathJax-Span-202" style="font-family: STIXGeneral-Italic; padding-left: 0.226em;">𝑖</span><span class="mi" id="MathJax-Span-203" style="font-family: STIXGeneral-Italic;">𝑑</span><span class="mo" id="MathJax-Span-204" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">=</span><span class="mtext" id="MathJax-Span-205" style="font-family: STIXGeneral-Regular; padding-left: 0.338em;">'N'</span><span class="texatom" id="MathJax-Span-206" style="padding-left: 0.226em;"><span class="mrow" id="MathJax-Span-207"><span class="mo" id="MathJax-Span-208" style="font-family: STIXGeneral-Regular;">‖</span></span></span><span class="mi" id="MathJax-Span-209" style="font-family: STIXGeneral-Italic; padding-left: 0.226em;">𝑑</span><span class="mi" id="MathJax-Span-210" style="font-family: STIXGeneral-Italic;">𝑖</span><span class="mi" id="MathJax-Span-211" style="font-family: STIXGeneral-Italic;">𝑔</span><span class="mi" id="MathJax-Span-212" style="font-family: STIXGeneral-Italic;">𝑒</span><span class="mi" id="MathJax-Span-213" style="font-family: STIXGeneral-Italic;">𝑠</span><span class="mi" id="MathJax-Span-214" style="font-family: STIXGeneral-Italic;">𝑡</span></span><span style="display: inline-block; width: 0px; height: 2.514em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.247em; border-left-width: 0px; border-left-style: solid; border-left-color: currentcolor; width: 0px; height: 1.128em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>m</mi><mi>e</mi><mi>t</mi><mi>h</mi><mi>o</mi><mi>d</mi><mo>−</mo><mi>s</mi><mi>p</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>f</mi><mi>i</mi><mi>c</mi><mo>−</mo><mi>i</mi><mi>d</mi><mo>=</mo><mtext>'N'</mtext><mrow class="MJX-TeXAtom-BIN"><mo fence="false" stretchy="false">‖</mo></mrow><mi>d</mi><mi>i</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi>t</mi></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-13">method-specific-id = \text{'N'} \mathbin\Vert digest</script></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_read">
+<a class="anchor" href="#_read"></a><a class="link" href="#_read">6.2. Read</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+    Alice-&gt;&gt;John: Hello John, how are you?
+    John--&gt;&gt;Alice: Great!
+    Alice-)John: See you later!</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rotate">
+<a class="anchor" href="#_rotate"></a><a class="link" href="#_rotate">6.3. Rotate</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete">
+<a class="anchor" href="#_delete"></a><a class="link" href="#_delete">6.4. Delete</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deactivate">
+<a class="anchor" href="#_deactivate"></a><a class="link" href="#_deactivate">6.5. Deactivate</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_resolving_offline">
+<a class="anchor" href="#_resolving_offline"></a><a class="link" href="#_resolving_offline">6.6. Resolving (offline)</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>How to resolve KERI DID into DID document (meaning JSON object <code>didDocument</code> as per [DIDComm v2 docs](<a href="https://w3c-ccg.github.io/universal-wallet-interop-spec/#example-3-a-did-resolution-response)" class="bare">https://w3c-ccg.github.io/universal-wallet-interop-spec/#example-3-a-did-resolution-response)</a>)</strong> - not just KERI DID is needed for this, but also KEL (Key Event Log) or its current [Key State object](<a href="https://identity.foundation/keri/did_methods/#keyState" class="bare">https://identity.foundation/keri/did_methods/#keyState</a>)</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>get KEL (Key Event Log) from <code>keyState</code> query parameter and service (if available) from <code>service</code> parameter</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>did:keri:prefix?keyState=base64KeyStateObject&amp;didDocService=base64ServiceObject</code></p>
+</li>
+<li>
+<p><code>service</code> block is base64 encoded after whitespace removal and common word substitution as in [Peer DID docs](<a href="https://identity.foundation/peer-did-method-spec/#multi-key-creation" class="bare">https://identity.foundation/peer-did-method-spec/#multi-key-creation</a>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>extract prefix string from KEL (attribute <code>i</code>) and generate did as did:keri:prefix</p>
+</li>
+<li>
+<p>extract keys (attr. <code>k</code>) from KEL (ICP or last ROT event) <em>- those are actually only x-coordinates of the pub. key</em></p>
+</li>
+<li>
+<p>build DID document -for each key:</p>
+</li>
+<li>
+<p>convert x-coordinate to Base64URL format by removing [derivation code](<a href="https://github.com/decentralized-identity/keri/blob/master/kids/kid0001.md#derivation-codes" class="bare">https://github.com/decentralized-identity/keri/blob/master/kids/kid0001.md#derivation-codes</a>) (e.g. <code>D</code>) and adding <code>=</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>e.g. <code>DaU6JR2nmwyZ-i0d8JZAoTNZH3ULvYAfSVPzhzS6b5CM</code> ⇒ <code>aU6JR2nmwyZ-i0d8JZAoTNZH3ULvYAfSVPzhzS6b5CM=</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Use [proper crypto algorithm](<a href="https://cryptobook.nakov.com/asymmetric-key-ciphers/elliptic-curve-cryptography-ecc#public-key-compression-in-the-elliptic-key-cryptosystems" class="bare">https://cryptobook.nakov.com/asymmetric-key-ciphers/elliptic-curve-cryptography-ecc#public-key-compression-in-the-elliptic-key-cryptosystems</a>) to create full pub. key from the x-coordinate</p>
+</li>
+<li>
+<p>encode the pub.key in Base52 format</p>
+</li>
+<li>
+<p>Get a key <code>type</code> by the [derivation code](<a href="https://github.com/decentralized-identity/keri/blob/master/kids/kid0001.md#derivation-codes" class="bare">https://github.com/decentralized-identity/keri/blob/master/kids/kid0001.md#derivation-codes</a>) (1st. char or first 4 chars)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>C</code> is for X25519 public encryption key ⇒ might be [X25519KeyAgreementKey2019](<a href="https://ns.did.ai/suites/x25519-2019/" class="bare">https://ns.did.ai/suites/x25519-2019/</a>) or [X25519KeyAgreementKey2020](<a href="https://ns.did.ai/suites/x25519-2020/" class="bare">https://ns.did.ai/suites/x25519-2020/</a>) <em>- we can choose which depending on key representation in the DID document</em></p>
+</li>
+<li>
+<p><code>D</code> is for Ed25519 public signing verification key ⇒ [Ed25519VerificationKey2018](<a href="https://ns.did.ai/suites/ed25519-2018/" class="bare">https://ns.did.ai/suites/ed25519-2018/</a>) or [Ed25519VerificationKey2020](<a href="https://ns.did.ai/suites/ed25519-2020/" class="bare">https://ns.did.ai/suites/ed25519-2020/</a>) <em>- we can choose which depending on key representation in the DID document</em></p>
+</li>
+<li>
+<p><code>1AAB</code> is for ECDSA secp256k1 public key ⇒ [EcdsaSecp256k1VerificationKey2019](<a href="https://ns.did.ai/suites/secp256k1-2019/" class="bare">https://ns.did.ai/suites/secp256k1-2019/</a>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Get key <code>controller</code> from attr. <code>i</code> <em>- we assume the controller is the DID owner</em></p>
+</li>
+<li>
+<p>Get key rights ([verification relationship](<a href="https://www.w3.org/TR/did-core/#verification-relationships" class="bare">https://www.w3.org/TR/did-core/#verification-relationships</a>) - <code>authentication</code>, <code>assertionMethod</code>, <code>keyAgreement</code>, <code>capabilityInvocation</code>…​)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>keyAgreement is for key with derivation code <code>C</code></p>
+</li>
+<li>
+<p>all other is for key with derivation code <code>1AAB</code> (or <code>D</code>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>add last Key State (ICP or ROT) as DID Document Metadata as defined in [2.5 Resolver Metadata](<a href="https://identity.foundation/keri/did_methods/#resolvermetadata" class="bare">https://identity.foundation/keri/did_methods/#resolvermetadata</a>)</p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1 text-justify">
+<h2 id="_security_considerations">
+<a class="anchor" href="#_security_considerations"></a><a class="link" href="#_security_considerations">7. Security Considerations</a>
+</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section is non-normative.</p>
+</div>
+<div class="sect2">
+<h3 id="_key_state_verification">
+<a class="anchor" href="#_key_state_verification"></a><a class="link" href="#_key_state_verification">7.1. Key State Verification</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_confidentiality_violations_password_sniffing">
+<a class="anchor" href="#_confidentiality_violations_password_sniffing"></a><a class="link" href="#_confidentiality_violations_password_sniffing">7.2. Confidentiality Violations, Password Sniffing</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_replay_attacks">
+<a class="anchor" href="#_replay_attacks"></a><a class="link" href="#_replay_attacks">7.3. Replay Attacks</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message_insertion_deletion_modification">
+<a class="anchor" href="#_message_insertion_deletion_modification"></a><a class="link" href="#_message_insertion_deletion_modification">7.4. Message Insertion, Deletion, Modification</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_man_in_the_middle_attacks">
+<a class="anchor" href="#_man_in_the_middle_attacks"></a><a class="link" href="#_man_in_the_middle_attacks">7.5. Man-In-The-Middle Attacks</a>
+</h3>
+<div class="admonitionblock warning">
+<table>
+<tbody>
+<tr>
+<td class="icon"><i class="fa icon-warning" title="Warning"></i></td>
+<td class="content">tbd.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1 text-left">
+<h2 id="_references">
+<a class="anchor" href="#_references"></a><a class="link" href="#_references">References</a>
+</h2>
+<div class="sectionbody">
+<div class="ulist bibliography">
+<ul class="bibliography">
+<li>
+<p><a id="DID-CORE"></a>[DID-CORE] Decentralized Identifiers (DIDs) v1.0. M. Sporny; A. Guy; M. Sabadello; D. Reed. W3C. 19. July 2022. W3C Recommendation. URL: <a href="https://www.w3.org/TR/did-core/" class="bare">https://www.w3.org/TR/did-core/</a></p>
+</li>
+<li>
+<p><a id="DID-KERI"></a>[DID-KERI] The did:keri Method v0.1. S. Smith; C. Cunningham; P. Feairheller. Identity Foundation. 10. November 2021. Unofficial Draft. URL: <a href="https://identity.foundation/keri/did_methods/#security-considerations" class="bare">https://identity.foundation/keri/did_methods/#security-considerations</a></p>
+</li>
+<li>
+<p><a id="DID-KEY"></a>[DID-KEY] The did:key Method v0.7. M. Sporny et al. W3C. September 2022. URL: <a href="https://w3c-ccg.github.io/did-method-key/" class="bare">https://w3c-ccg.github.io/did-method-key/</a></p>
+</li>
+<li>
+<p><a id="DID-PEER"></a>[DID-PEER] Peer DID Method Specification. Oskar Deventer et al. Identity Foundation. 28. June 2023. W3C Document. URL: <a href="https://identity.foundation/peer-did-method-spec/" class="bare">https://identity.foundation/peer-did-method-spec/</a></p>
+</li>
+<li>
+<p><a id="DID-WEB"></a>[DID-WEB] did:web Method Specification. Christian Gribneau et al. W3C. 6. May 2023. URL: <a href="https://w3c-ccg.github.io/did-method-web/" class="bare">https://w3c-ccg.github.io/did-method-web/</a></p>
+</li>
+<li>
+<p><a id="KERI"></a>[KERI] Key Event Receipt Infrastructure (KERI) Design. S. Smith. GitHub. 7. May 2021. v2.60. URL: <a href="https://github.com/SmithSamuelM/Papers/blob/master/whitepapers/KERI_WP_2.x.web.pdf" class="bare">https://github.com/SmithSamuelM/Papers/blob/master/whitepapers/KERI_WP_2.x.web.pdf</a></p>
+</li>
+<li>
+<p><a id="RFC2119"></a>[RFC2119] Key words for use in RFCs to Indicate Requirement Levels. S. Bradner. IETF. March 1997. URL: <a href="https://www.rfc-editor.org/rfc/rfc2119" class="bare">https://www.rfc-editor.org/rfc/rfc2119</a></p>
+</li>
+<li>
+<p><a id="RFC7517"></a>[RFC7517] JSON Web Key (JWK). M. Jones. IETF. May 2015. URL: <a href="https://tools.ietf.org/html/rfc7517" class="bare">https://tools.ietf.org/html/rfc7517</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">Version 1.0.0<br> Last updated 2023-09-21 12:28:55 +0200</div>
+</div>
+<script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: { equationNumbers: { autoNumber: "none" } }
+})
+MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
+  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
+    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
+      data.math.root.display = "block"
+    }
+    return data
+  })
+})
+</script> <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+  </div>
+</div>
